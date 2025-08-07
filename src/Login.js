@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import logo from './assets/generic-logo.svg';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const logo = process.env.PUBLIC_URL + '/generic-logo.svg';
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8080/auth/login', {
+            const response = await axios.post('http://localhost:9000/auth/login', {
                 username,
                 password
             });
@@ -25,6 +27,8 @@ const Login = () => {
 
             alert('Login exitoso');
             // Redirigir a otra vista, por ejemplo al dashboard (lo agregaremos después)
+            navigate('/dashboard');
+
         } catch (err) {
             setError('Credenciales inválidas');
         }
