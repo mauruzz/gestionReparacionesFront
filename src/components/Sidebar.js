@@ -1,37 +1,79 @@
+// src/components/Sidebar.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Sidebar.css';
+import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import BuildIcon from '@mui/icons-material/Build';
+import DescriptionIcon from '@mui/icons-material/Description';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import BackupIcon from '@mui/icons-material/Backup';
+import SpeedIcon from '@mui/icons-material/Speed';
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const username = localStorage.getItem('username');
-    const role = localStorage.getItem('role');
+    const username = localStorage.getItem('username') || 'Usuario';
+    const role = localStorage.getItem('role') || '';
 
     const toggleSidebar = () => setCollapsed(!collapsed);
 
+    const menuItems = [
+        { to: '/dashboard', label: 'Inicio', icon: <HomeIcon /> },
+        { to: '/user/register', label: 'Registro usuario', icon: <PersonAddAlt1Icon /> },
+        { to: '/ticket/register', label: 'Registro reparación', icon: <InventoryIcon /> },
+        { to: '/admin', label: 'Administrar', icon: <BuildIcon /> },
+        { to: '/planillas', label: 'Planillas', icon: <DescriptionIcon /> },
+        { to: '/cardex', label: 'Cardex', icon: <SpeedIcon /> },
+        { to: '/backup', label: 'Backup', icon: <BackupIcon /> },
+    ];
+
+    const initials = username ? username.charAt(0).toUpperCase() : 'U';
+
     return (
-        <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-            <div className="sidebar-header">
-                <button onClick={toggleSidebar}>{collapsed ? '➡' : '⬅'}</button>
+        <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+            <div className="sidebar-top">
+                <div className="brand">
+                    <div className="brand-logo">{/* acá podrías poner un svg o logo */}</div>
+                    {!collapsed && <div className="brand-text">Tu Servicio</div>}
+                </div>
+                <IconButton size="small" onClick={toggleSidebar} className="toggle-btn">
+                    <MenuIcon />
+                </IconButton>
+            </div>
+
+            <div className="sidebar-profile">
+                <Avatar className="sidebar-avatar">{initials}</Avatar>
                 {!collapsed && (
-                    <div>
-                        <p><strong>{username}</strong></p>
-                        <p>{role}</p>
+                    <div className="profile-info">
+                        <div className="profile-name">{username}</div>
+                        <div className="profile-role">{role}</div>
                     </div>
                 )}
             </div>
-            <nav>
+
+            <nav className="sidebar-nav">
                 <ul>
-                    <li><Link to="/dashboard">Inicio</Link></li>
-                    <li><Link to="/user/register">Registro usuario</Link></li>
-                    <li><Link to="/ticket/register">Registro reparación</Link></li>
-                    <li><Link to="/admin">Administrar</Link></li>
-                    <li><Link to="/planillas">Planillas</Link></li>
-                    <li><Link to="/cardex">Cardex</Link></li>
-                    <li><Link to="/backup">Backup</Link></li>
+                    {menuItems.map((m) => (
+                        <li key={m.to} className="menu-item">
+                            <Link to={m.to} className="menu-link">
+                                <span className="menu-icon">{m.icon}</span>
+                                {!collapsed && <span className="menu-label">{m.label}</span>}
+                            </Link>
+                        </li>
+                    ))}
                 </ul>
             </nav>
-        </div>
+
+            <div className="sidebar-footer">
+                {!collapsed && <small>Docs</small>}
+                <div className="footer-icons">
+                    {/* puedes agregar iconos de docs, help, etc */}
+                </div>
+            </div>
+        </aside>
     );
 };
 

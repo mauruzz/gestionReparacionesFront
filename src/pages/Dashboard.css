@@ -1,0 +1,15 @@
+/* src/pages/Dashboard.css */
+.dashboard-container {
+    display: flex;
+}
+
+.dashboard-content {
+    flex: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    margin-left: 240px; /* ancho sidebar expandido */
+}
+
+.dashboard-content.collapsed {
+    margin-left: 80px; /* ancho sidebar colapsado */
+}

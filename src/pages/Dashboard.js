@@ -1,15 +1,18 @@
-import React from 'react';
+// src/pages/Dashboard.js
+import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import TicketsPanel from '../components/TicketsPanel';
+import './Dashboard.css';
 
 const Dashboard = () => {
+    const [collapsed, setCollapsed] = useState(false);
+
     return (
-        <div style={{ display: 'flex' }}>
-            <Sidebar />
-            <div style={{ marginLeft: '240px', padding: '20px', width: '100%' }}>
-                <h2>Dashboard</h2>
+        <div className="dashboard-container">
+            <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+            <main className={`dashboard-content ${collapsed ? 'collapsed' : ''}`}>
                 <TicketsPanel />
-            </div>
+            </main>
         </div>
     );
 };
