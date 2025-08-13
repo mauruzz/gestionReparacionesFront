@@ -22,8 +22,8 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
 
     const menuItems = [
         { to: '/dashboard', label: 'Inicio', icon: <HomeIcon /> },
-        { to: '/user/register', label: 'Registro usuario', icon: <PersonAddAlt1Icon /> },
-        { to: '/ticket/register', label: 'Registro reparación', icon: <InventoryIcon /> },
+        { to: '/register-user', label: 'Registro usuario', icon: <PersonAddAlt1Icon /> },
+        { to: '/service-ticket', label: 'Registro reparación', icon: <InventoryIcon /> },
         { to: '/admin', label: 'Administrar', icon: <BuildIcon /> },
         { to: '/planillas', label: 'Planillas', icon: <DescriptionIcon /> },
         { to: '/cardex', label: 'Cardex', icon: <SpeedIcon /> },

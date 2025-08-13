@@ -6,6 +6,7 @@ import theme from "./theme";
 import PrivateRoute from "./components/PrivateRoute"; // lo importamos
 import Dashboard from './pages/Dashboard'; // lo crearemos luego
 import LoginPage from "./pages/LoginPage";
+import ServiceTicket from "./pages/ServiceTicket"
 
 function App() {
     return (
@@ -20,6 +21,8 @@ function App() {
                             <Dashboard />
                         </PrivateRoute>
                     } />
+                    <Route path="/service-ticket" element=
+                            <ServiceTicket /> />
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             </Router>
