@@ -4,7 +4,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme";
 import PrivateRoute from "./components/PrivateRoute"; // lo importamos
-import Login from './Login';
 import Dashboard from './pages/Dashboard'; // lo crearemos luego
 import LoginPage from "./pages/LoginPage";
 
@@ -27,5 +26,4 @@ function App() {
         </ThemeProvider>
     );
 }
-//<Route path="/login" element={<Login />} />
 export default App;

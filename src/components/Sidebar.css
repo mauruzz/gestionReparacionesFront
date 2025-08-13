@@ -28,6 +28,14 @@
     margin-bottom: 18px;
 }
 
+.sidebar-top.collapsed {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    align-self: center;
+}
+
 .brand {
     display: flex;
     align-items: center;
@@ -59,6 +67,7 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 18px;
+    padding: 10px;
 }
 
 .sidebar-avatar {

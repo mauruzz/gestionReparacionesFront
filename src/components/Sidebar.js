@@ -13,8 +13,8 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import BackupIcon from '@mui/icons-material/Backup';
 import SpeedIcon from '@mui/icons-material/Speed';
 
-const Sidebar = () => {
-    const [collapsed, setCollapsed] = useState(false);
+const Sidebar = ({ collapsed, setCollapsed }) => {
+
     const username = localStorage.getItem('username') || 'Usuario';
     const role = localStorage.getItem('role') || '';
 
@@ -34,11 +34,13 @@ const Sidebar = () => {
 
     return (
         <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-            <div className="sidebar-top">
-                <div className="brand">
-                    <div className="brand-logo">{/* acá podrías poner un svg o logo */}</div>
-                    {!collapsed && <div className="brand-text">Tu Servicio</div>}
-                </div>
+            <div className={`sidebar-top ${collapsed ? 'collapsed' : ''}`}>
+                {!collapsed &&
+                    <div className="brand">
+                        <div className="brand-logo">{/* acá podrías poner un svg o logo */}</div>
+                    <div className="brand-text">Service</div>
+                    </div>
+                }
                 <IconButton size="small" onClick={toggleSidebar} className="toggle-btn">
                     <MenuIcon />
                 </IconButton>

@@ -72,19 +72,26 @@ const TicketsPanel = () => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {/* Top pills (Messages / Social / Notifications / Backup) */}
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-                <Pill active icon={<MailOutlineIcon />} label="Messages" />
-                <Pill icon={<PeopleIcon />} label="Social" />
-                <Pill icon={<NotificationsNoneIcon />} label="Notifications" />
-                <Pill icon={<BackupIcon />} label="Backup" />
+                <Pill
+                    active={tabIndex === 0}
+                    icon={<MailOutlineIcon />}
+                    label="Últimos 50 Tickets"
+                    onClick={() => setTabIndex(0)}
+                />
+                <Pill
+                    active={tabIndex === 1}
+                    icon={<PeopleIcon />}
+                    label="Tickets no finalizados"
+                    onClick={() => setTabIndex(1)}
+                />
+                <Pill
+                    active={tabIndex === 2}
+                    icon={<NotificationsNoneIcon />}
+                    label="Tickets por presupuestar"
+                    onClick={() => setTabIndex(2)}
+                />
             </Stack>
-
-            <Tabs value={tabIndex} onChange={handleTabChange} textColor="primary" indicatorColor="primary" sx={{ mb: 2 }}>
-                <Tab label="Últimos 50 ServiceTicket" />
-                <Tab label="Tickets no finalizados" />
-                <Tab label="Tickets por presupuestar" />
-            </Tabs>
 
             <div>
                 {tabIndex === 0 && <TicketTable tickets={latestTickets} loading={loading} />}
@@ -95,7 +102,7 @@ const TicketsPanel = () => {
     );
 };
 
-const Pill = ({ icon, label, active }) => (
+const Pill = ({ icon, label, active, onClick }) => (
     <Button
         variant={active ? 'contained' : 'outlined'}
         size="small"
@@ -108,6 +115,7 @@ const Pill = ({ icon, label, active }) => (
             boxShadow: 'none'
         }}
         startIcon={icon}
+        onClick={onClick}
     >
         {label}
     </Button>
