@@ -10,6 +10,7 @@ import {
     Typography,
     Box,
 } from "@mui/material";
+import './ServiceTicketForm.css';
 
 const SectionTitle = ({ children }) => (
     <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
@@ -27,10 +28,11 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
     return (
         <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
             <CardHeader
-                title="Formulario de Service Ticket"
+                className={"card-header"}
+                title="Nota de inspección"
                 sx={{
                     pb: 0,
-                    "& .MuiCardHeader-title": { fontWeight: 700 },
+                    "& .MuiCardHeader-title": { fontWeight: 700, fontsize: "30px"},
                 }}
                 action={
                     <Chip
