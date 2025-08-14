@@ -12,13 +12,14 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    transition: width .25s ease;
+    transition: width .5s ease;
     z-index: 50;
 }
 
 .sidebar.collapsed {
     width: 80px;
     min-width: 80px;
+    transition: width .3s ease;
 }
 
 .sidebar-top {

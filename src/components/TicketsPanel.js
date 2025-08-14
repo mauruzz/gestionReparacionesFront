@@ -17,11 +17,11 @@ import {
     Button,
     Stack,
     IconButton,
-    Typography
+    Typography, responsiveFontSizes
 } from '@mui/material';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import PeopleIcon from '@mui/icons-material/People';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
+import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
+import PriceChangeOutlinedIcon from '@mui/icons-material/PriceChangeOutlined';
 import BackupIcon from '@mui/icons-material/Backup';
 import './TicketsPanel.css';
 
@@ -71,23 +71,23 @@ const TicketsPanel = () => {
     const handleTabChange = (e, v) => setTabIndex(v);
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%'}}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
                 <Pill
                     active={tabIndex === 0}
-                    icon={<MailOutlineIcon />}
+                    icon={<LibraryBooksOutlinedIcon />}
                     label="Últimos 50 Tickets"
                     onClick={() => setTabIndex(0)}
                 />
                 <Pill
                     active={tabIndex === 1}
-                    icon={<PeopleIcon />}
+                    icon={<PendingActionsOutlinedIcon />}
                     label="Tickets no finalizados"
                     onClick={() => setTabIndex(1)}
                 />
                 <Pill
                     active={tabIndex === 2}
-                    icon={<NotificationsNoneIcon />}
+                    icon={<PriceChangeOutlinedIcon />}
                     label="Tickets por presupuestar"
                     onClick={() => setTabIndex(2)}
                 />
@@ -105,7 +105,7 @@ const TicketsPanel = () => {
 const Pill = ({ icon, label, active, onClick }) => (
     <Button
         variant={active ? 'contained' : 'outlined'}
-        size="small"
+        size="large"
         sx={{
             borderRadius: '18px',
             textTransform: 'none',

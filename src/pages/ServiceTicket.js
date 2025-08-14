@@ -1,90 +1,192 @@
-// src/pages/ServiceTicket.js
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ServiceTicketForm from "../components/ServiceTicketForm";
 import ServiceTicketStub from "../components/ServiceTicketStub";
+import ActionButtons from "../components/ActionButtons";
+import { Box, Typography } from "@mui/material";
 
 const ServiceTicket = () => {
     const [collapsed, setCollapsed] = useState(false);
+
     const [formData, setFormData] = useState({
         id_service_ticket: "",
         entry_date: "",
+
         defect: "",
-        work_done: "",
         budget: "",
+        work_done: "",
         total_cost: "",
-        delivery_date: "",
         comments: "",
+
+        // opcionales, por ahora vacíos
+        delivery_date: "",
         report: "",
-        user: {},
-        client: {},
-        instrument: {}
+
+        // anidados
+        user: {
+            username: localStorage.getItem("username") || "",
+            role: localStorage.getItem("role") || "",
+        },
+        client: {
+            name: "",
+            email: "",
+            phone: "",
+        },
+        instrument: {
+            product: "",
+            brand: "",
+            model: "",
+            serial_number: "",
+            purchase_date: "",
+            warranty: "", // texto libre (o "Sí/No")
+            notice: "",
+        },
     });
+
+    // refs para imprimir
+    const formRef = useRef(null);
+    const stubRef = useRef(null);
+
+    const authHeaders = () => {
+        const token = localStorage.getItem("token");
+        return {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+    };
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch("http://localhost:9000/api/service_ticket/save", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
-            if (response.ok) {
-                alert("Service Ticket guardado correctamente");
-            } else {
-                alert("Error al guardar");
+            const res = await fetch(
+                "http://localhost:9000/api/service_ticket/save",
+                {
+                    method: "POST",
+                    headers: authHeaders(),
+                    body: JSON.stringify(formData),
+                }
+            );
+            if (!res.ok) throw new Error("Error al guardar");
+            const saved = await res.json().catch(() => null);
+            // si el back devuelve el objeto creado, tomamos su id
+            if (saved?.id_service_ticket) {
+                setFormData((prev) => ({
+                    ...prev,
+                    id_service_ticket: saved.id_service_ticket,
+                }));
             }
-        } catch (error) {
-            console.error(error);
-            alert("Error de conexión");
+            alert("Service Ticket guardado correctamente");
+        } catch (e) {
+            console.error(e);
+            alert("No se pudo guardar el ticket");
         }
     };
 
     const handleUpdate = async () => {
+        // suponemos endpoint PUT /api/service_ticket/{id}
+        if (!formData.id_service_ticket) {
+            alert("Primero guarde el ticket para obtener un ID.");
+            return;
+        }
         try {
-            const response = await fetch("http://localhost:9000/api/service_ticket/update", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
-            if (response.ok) {
-                alert("Service Ticket actualizado");
-            } else {
-                alert("Error al actualizar");
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Error de conexión");
+            const res = await fetch(
+                `http://localhost:9000/api/service_ticket/${formData.id_service_ticket}`,
+                {
+                    method: "PUT",
+                    headers: authHeaders(),
+                    body: JSON.stringify(formData),
+                }
+            );
+            if (!res.ok) throw new Error("Error al actualizar");
+            alert("Service Ticket actualizado");
+        } catch (e) {
+            console.error(e);
+            alert("No se pudo actualizar el ticket");
         }
     };
 
-    const handlePrint = (type) => {
-        if (type === "all") {
-            window.print(); // luego se personaliza
-        } else if (type === "form") {
-            console.log("Imprimir solo formulario");
-        } else if (type === "stub") {
-            console.log("Imprimir solo talón");
-        }
+    // utilitario de impresión: abre una ventana con contenido recibido y dispara print
+    const printNode = (node, title = "Imprimir") => {
+        if (!node) return;
+        const html = node.innerHTML;
+        const win = window.open("", "_blank", "width=900,height=700");
+        if (!win) return;
+
+        win.document.write(`
+      <html>
+        <head>
+          <title>${title}</title>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+          <style>
+            body { font-family: Roboto, Arial, sans-serif; padding: 16px; }
+            .print-card { page-break-inside: avoid; }
+            @media print { .no-print { display: none !important; } }
+          </style>
+        </head>
+        <body>${html}</body>
+      </html>
+    `);
+        win.document.close();
+        win.focus();
+        win.print();
+        win.close();
+    };
+
+    const handlePrintAll = () => {
+        // construimos un contenedor temporal que combine formulario + talón
+        const container = document.createElement("div");
+        container.innerHTML = `
+      <div class="print-card">${formRef.current?.innerHTML || ""}</div>
+      <hr/>
+      <div class="print-card">${stubRef.current?.innerHTML || ""}</div>
+    `;
+        printNode(container, "ServiceTicket - Completo");
+    };
+
+    const handlePrintForm = () => printNode(formRef.current, "ServiceTicket - Nota");
+    const handlePrintStub = () => printNode(stubRef.current, "ServiceTicket - Talón");
+
+    const goToResultsForm = () => {
+        // navega a otra ruta (ajusta si usás useNavigate)
+        window.location.href = "/results-form";
     };
 
     return (
         <div className="dashboard-container">
             <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
             <main className={`dashboard-content ${collapsed ? "collapsed" : ""}`}>
-                <h1>Service Ticket</h1>
-                <div className="service-ticket-actions">
-                    <button onClick={handleSubmit}>Enviar</button>
-                    <button onClick={() => handlePrint("all")}>Imprimir todo</button>
-                    <button onClick={() => handlePrint("form")}>Imprimir nota</button>
-                    <button onClick={() => handlePrint("stub")}>Imprimir talón</button>
-                    <button onClick={handleUpdate}>Actualizar</button>
-                    <button onClick={() => (window.location.href = "/results-form")}>
-                        Formulario de resultados
-                    </button>
-                </div>
-                <div className="service-ticket-container">
+                <Box sx={{ mb: 2 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                        Nota de inspección
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {/*subtitulo*/}
+                    </Typography>
+                </Box>
+
+                {/* Formulario (primero) */}
+                <div ref={formRef}>
                     <ServiceTicketForm formData={formData} setFormData={setFormData} />
-                    <ServiceTicketStub formData={formData} />
+                </div>
+
+                {/* Botonera (después del form) */}
+                <Box sx={{ mt: 2 }}>
+                    <ActionButtons
+                        onSubmit={handleSubmit}
+                        onUpdate={handleUpdate}
+                        onPrintAll={handlePrintAll}
+                        onPrintForm={handlePrintForm}
+                        onPrintStub={handlePrintStub}
+                        onGoToResults={goToResultsForm}
+                    />
+                </Box>
+
+                {/* Talón (oculto visualmente, pero listo para imprimir) */}
+                <div style={{ position: "absolute", left: "-99999px", top: 0 }}>
+                    <div ref={stubRef}>
+                        <ServiceTicketStub formData={formData} />
+                    </div>
                 </div>
             </main>
         </div>

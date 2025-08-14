@@ -1,10 +1,6 @@
 /* src/components/TicketsPanel.css */
-.tickets-panel {
-
-}
-
-.tickets-panel.collapsed {
-
+.MuiSvgIcon-root {
+    font-size: 28px;
 }
 
 .tickets-table-container {
