@@ -49,17 +49,11 @@ const TicketsPanel = () => {
 
     // Derivados
     const latestTickets = [...tickets]
-        .sort((a, b) => {
-            // intenta ordenar por fecha; si no existe, por id
-            const da = a.entry_date ? new Date(a.entry_date) : null;
-            const db = b.entry_date ? new Date(b.entry_date) : null;
-            if (da && db) return db - da;
-            return (b.id_service_ticket || 0) - (a.id_service_ticket || 0);
-        })
+        .sort((a, b) => (b.id_service_ticket || 0) - (a.id_service_ticket || 0))
         .slice(0, 50);
 
     const unfinishedTickets = tickets.filter(t => {
-        const status = getStatusValue(t).toLowerCase();
+        const status = t.status?.description.toLowerCase() || 'Pendiente';
         return !(status === 'finalizado' || status === 'entregado' || status === 'done' || status === 'paid');
     });
 
@@ -147,6 +141,7 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
                         <TableCell>Estado</TableCell>
                         <TableCell>Cliente</TableCell>
                         <TableCell>Producto</TableCell>
+                        <TableCell>Modelo</TableCell>
                         <TableCell align="right">Costo</TableCell>
                         {editableField && <TableCell>Nota</TableCell>}
                     </TableRow>
@@ -156,9 +151,10 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
                     {tickets.map(t => {
                         const id = t.id_service_ticket ?? t.id ?? t.idOrder;
                         const date = t.entry_date ? formatDate(t.entry_date) : '-';
-                        const status = getStatusValue(t);
+                        const status = t.status?.description || 'Pendiente';
                         const clientName = t.client?.name || t.clientName || '-';
-                        const product = t.instrument?.product || t.instrument?.model || '-';
+                        const product = t.instrument?.product || '-';
+                        const model = t.instrument?.model || '-';
                         const cost = t.total_cost ?? t.costo_total ?? t.totalCost ?? 0;
                         const instrumentId = t.instrument?.id_instrument ?? t.instrument?.id;
 
@@ -176,6 +172,7 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
                                     </div>
                                 </TableCell>
                                 <TableCell>{product}</TableCell>
+                                <TableCell>{model}</TableCell>
                                 <TableCell align="right">{formatCurrency(cost)}</TableCell>
                                 {editableField && (
                                     <TableCell>
@@ -197,15 +194,11 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
 };
 
 // Helpers
-const getStatusValue = (t) => {
-    // intenta varios caminos para obtener estado
-    return (t.status?.name || t.estado || t.state || t.status || t.estadoOrden?.nombre || 'Pendiente') + '';
-};
 
 const formatDate = (d) => {
     try {
         const dt = new Date(d);
-        return dt.toLocaleString();
+        return dt.toLocaleDateString();
     } catch {
         return d;
     }
@@ -225,7 +218,7 @@ const StatusChip = ({ status }) => {
     let color = 'default';
     if (s.includes('final') || s.includes('paid') || s.includes('entregado')) color = 'success';
     else if (s.includes('cancel') || s.includes('anulado')) color = 'error';
-    else if (s.includes('pend') || s.includes('pending')) color = 'warning';
+    else if (s.includes('recepcionado') || s.includes('pending')) color = 'warning';
     else color = 'default';
 
     return <Chip label={status} color={color} size="small" />;

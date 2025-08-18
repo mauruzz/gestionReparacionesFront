@@ -27,6 +27,10 @@ export default function LoginPage() {
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("username", res.data.username);
             localStorage.setItem("role", res.data.role);
+            localStorage.setItem("id_user", res.data.id_user);
+            localStorage.setItem("name", res.data.name);
+            localStorage.setItem("email", res.data.email);
+            localStorage.setItem("branch", res.data.branch);
 
             navigate("/dashboard");
         } catch (err) {

@@ -8,7 +8,7 @@ import {
     Grid,
     TextField,
     Typography,
-    Box,
+    Box, FormControl, InputLabel, Select, MenuItem,
 } from "@mui/material";
 import './ServiceTicketForm.css';
 
@@ -25,14 +25,33 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
     const setNested = (obj, field, value) =>
         setFormData((prev) => ({ ...prev, [obj]: { ...prev[obj], [field]: value } }));
 
+    const handleInstrumentChange = (e) => {
+        const { name, value } = e.target;
+
+        let parsedValue = value;
+
+        // Si el campo es warranty, asegurar booleano
+        if (name === "warranty") {
+            parsedValue = value === "true" || value === true;
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            instrument: {
+                ...prev.instrument,
+                [name]: parsedValue
+            }
+        }));
+    };
+
     return (
         <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
             <CardHeader
-                className={"card-header"}
                 title="Nota de inspección"
+                slotProps={{ title: { fontSize: "xx-large" } }}
                 sx={{
                     pb: 0,
-                    "& .MuiCardHeader-title": { fontWeight: 700, fontsize: "30px"},
+                    "& .MuiCardHeader-title ": { fontWeight: 700 },
                 }}
                 action={
                     <Chip
@@ -53,7 +72,7 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                             size="small"
                             type="date"
                             label="Fecha de ingreso"
-                            InputLabelProps={{ shrink: true }}
+                            slotProps={{ inputLabel: { shrink: true } }}
                             value={formData.entry_date || ""}
                             onChange={(e) => setField("entry_date", e.target.value)}
                         />
@@ -145,22 +164,28 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                             size="small"
                             type="date"
                             label="Fecha de compra"
-                            InputLabelProps={{ shrink: true }}
+                            slotProps={{ inputLabel: { shrink: true } }}
                             value={formData.instrument?.purchase_date || ""}
                             onChange={(e) =>
                                 setNested("instrument", "purchase_date", e.target.value)
                             }
                         />
                     </Grid>
-                    <Grid item xs={12} md={4}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            label="Garantía"
-                            placeholder="Ej: Sí (hasta 01/2026)"
-                            value={formData.instrument?.warranty || ""}
-                            onChange={(e) => setNested("instrument", "warranty", e.target.value)}
-                        />
+                    <Grid item xs={12} md={40}>
+                        <FormControl sx={{ m: 1, width: 203, minWidth: 110, margin: 0 }} size={"small"} variant="outlined">
+                            <InputLabel id="warranty-label">Garantía</InputLabel>
+                            <Select
+                                labelId="warranty-label"
+                                name="warranty"
+                                value={formData.instrument?.warranty ? "true" : "false"}
+                                onChange={handleInstrumentChange}
+                                fullWidth={true}
+                                label="Garantía"
+                            >
+                                <MenuItem value={true}>Sí</MenuItem>
+                                <MenuItem value={false}>No</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
 
                     <Grid item xs={12}>
@@ -179,7 +204,7 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                 <Divider sx={{ my: 2 }} />
 
                 {/* 3) Service Ticket */}
-                <SectionTitle>Datos del Service Ticket</SectionTitle>
+                <SectionTitle>Datos de inspección</SectionTitle>
                 <Grid container spacing={2} sx={{ mb: 1 }}>
                     <Grid item xs={12} md={6}>
                         <TextField
@@ -242,12 +267,12 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                 </Grid>
 
                 {/* Si querés mostrar quién cargó el ticket */}
-                {formData.user?.username ? (
+                {localStorage.getItem("name") ? (
                     <>
                         <Divider sx={{ my: 2 }} />
                         <Box sx={{ color: "text.secondary" }}>
                             <Typography variant="caption">
-                                Usuario: <strong>{formData.user.username}</strong> ({formData.user.role || "—"})
+                                Usuario: <strong>{localStorage.getItem("name")}</strong>
                             </Typography>
                         </Box>
                     </>

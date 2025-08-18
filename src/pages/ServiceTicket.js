@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import ServiceTicketForm from "../components/ServiceTicketForm";
 import ServiceTicketStub from "../components/ServiceTicketStub";
 import ActionButtons from "../components/ActionButtons";
 import { Box, Typography } from "@mui/material";
+
 
 const ServiceTicket = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -24,8 +25,7 @@ const ServiceTicket = () => {
 
         // anidados
         user: {
-            username: localStorage.getItem("username") || "",
-            role: localStorage.getItem("role") || "",
+            id_user: localStorage.getItem("id_user") || "",
         },
         client: {
             name: "",
@@ -38,10 +38,39 @@ const ServiceTicket = () => {
             model: "",
             serial_number: "",
             purchase_date: "",
-            warranty: "", // texto libre (o "Sí/No")
+            warranty: true,
             notice: "",
         },
+        status: {
+            id_status: ''
+        }
     });
+
+    useEffect(() => {
+        const fetchInitialStatus = async () => {
+            try {
+                const response = await fetch("http://localhost:9000/api/status/initial_status", {
+                    method: "GET",
+                    headers: authHeaders(),
+                });
+                if (!response.ok) {
+                    throw new Error("Error al obtener el status inicial");
+                }
+                const data = await response.json();
+
+                setFormData((prev) => ({
+                    ...prev,
+                    status: { id_status: data.id_status }
+                }));
+            } catch (error) {
+                console.error("No se pudo cargar el status inicial:", error);
+            }
+        };
+        console.log(formData.status.id_status);
+        fetchInitialStatus();
+    }, []);
+
+
 
     // refs para imprimir
     const formRef = useRef(null);
@@ -56,6 +85,7 @@ const ServiceTicket = () => {
     };
 
     const handleSubmit = async () => {
+        console.log(formData);
         try {
             const res = await fetch(
                 "http://localhost:9000/api/service_ticket/save",
@@ -156,14 +186,16 @@ const ServiceTicket = () => {
         <div className="dashboard-container">
             <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
             <main className={`dashboard-content ${collapsed ? "collapsed" : ""}`}>
+                {/*
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
                         Nota de inspección
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {/*subtitulo*/}
+                        subtitulo
                     </Typography>
                 </Box>
+                */}
 
                 {/* Formulario (primero) */}
                 <div ref={formRef}>
