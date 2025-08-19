@@ -1,12 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import ServiceTicketForm from "../components/ServiceTicketForm";
 import ServiceTicketStub from "../components/ServiceTicketStub";
 import ActionButtons from "../components/ActionButtons";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 
 
 const ServiceTicket = () => {
+    const { id } = useParams();
+
+    const [loading, setLoading] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -66,9 +71,28 @@ const ServiceTicket = () => {
                 console.error("No se pudo cargar el status inicial:", error);
             }
         };
-        console.log(formData.status.id_status);
         fetchInitialStatus();
     }, []);
+
+    useEffect(() => {
+        const fetchTicket = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(
+                    `http://localhost:9000/api/service_ticket/${id}`, {
+                        method: "GET",
+                        headers: authHeaders(),
+                    }
+                );
+                setFormData(response.data);
+            } catch (error) {
+                console.error("Error fetching ticket:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTicket();
+    }, [id]);
 
 
 
@@ -181,6 +205,8 @@ const ServiceTicket = () => {
         // navega a otra ruta (ajusta si usás useNavigate)
         window.location.href = "/results-form";
     };
+
+    if (loading) return <CircularProgress />;
 
     return (
         <div className="dashboard-container">

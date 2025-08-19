@@ -22,13 +22,15 @@ import {
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
 import PriceChangeOutlinedIcon from '@mui/icons-material/PriceChangeOutlined';
-import BackupIcon from '@mui/icons-material/Backup';
 import './TicketsPanel.css';
+
+import { useNavigate } from "react-router-dom";
 
 const TicketsPanel = () => {
     const [tickets, setTickets] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
     const [loading, setLoading] = useState(false);
+    
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -115,7 +117,13 @@ const Pill = ({ icon, label, active, onClick }) => (
     </Button>
 );
 
+
 const TicketTable = ({ tickets = [], editableField = false, loading = false }) => {
+
+    const navigate = useNavigate();
+    const handleRowClick = (id) => {
+        navigate(`/service-ticket/${id}`);
+    };
     const handleNoticeSave = async (instrumentId, value) => {
         // Placeholder: intenta hacer PATCH al endpoint de instrument (ajustá la URL real)
         try {
@@ -159,7 +167,11 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
                         const instrumentId = t.instrument?.id_instrument ?? t.instrument?.id;
 
                         return (
-                            <TableRow key={id} hover>
+                            <TableRow key={t.id_service_ticket}
+                                      hover
+                                      style={{ cursor: "pointer" }}
+                                      onClick={() => handleRowClick(t.id_service_ticket)}
+                            >
                                 <TableCell>#{id}</TableCell>
                                 <TableCell>{date}</TableCell>
                                 <TableCell>
@@ -194,6 +206,7 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
 };
 
 // Helpers
+
 
 const formatDate = (d) => {
     try {
