@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import ServiceTicketForm from "../components/ServiceTicketForm";
@@ -10,7 +11,6 @@ import { Box, Typography, CircularProgress } from "@mui/material";
 
 const ServiceTicket = () => {
     const { id } = useParams();
-
     const [loading, setLoading] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
 
@@ -53,6 +53,7 @@ const ServiceTicket = () => {
 
     useEffect(() => {
         const fetchInitialStatus = async () => {
+            setLoading(true);
             try {
                 const response = await fetch("http://localhost:9000/api/status/initial_status", {
                     method: "GET",
@@ -69,6 +70,8 @@ const ServiceTicket = () => {
                 }));
             } catch (error) {
                 console.error("No se pudo cargar el status inicial:", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchInitialStatus();
@@ -158,48 +161,40 @@ const ServiceTicket = () => {
         }
     };
 
-    // utilitario de impresión: abre una ventana con contenido recibido y dispara print
-    const printNode = (node, title = "Imprimir") => {
-        if (!node) return;
-        const html = node.innerHTML;
-        const win = window.open("", "_blank", "width=900,height=700");
-        if (!win) return;
+    // Marca un nodo como "área de impresión", imprime y limpia
+    const printElement = (el) => {
+        if (!el) return;
+        el.classList.add("print-area");
+        window.print();
+        el.classList.remove("print-area");
+    };
 
-        win.document.write(`
-      <html>
-        <head>
-          <title>${title}</title>
-          <meta charset="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-          <style>
-            body { font-family: Roboto, Arial, sans-serif; padding: 16px; }
-            .print-card { page-break-inside: avoid; }
-            @media print { .no-print { display: none !important; } }
-          </style>
-        </head>
-        <body>${html}</body>
-      </html>
-    `);
-        win.document.close();
-        win.focus();
-        win.print();
-        win.close();
+    const handlePrintForm = () => {
+        printElement(formRef.current);
+    };
+
+    const handlePrintStub = () => {
+        // Asegurate de marcar el contenedor del stub (aunque esté fuera de pantalla)
+        printElement(stubRef.current);
     };
 
     const handlePrintAll = () => {
-        // construimos un contenedor temporal que combine formulario + talón
+        // Cloná ambos contenidos y armá un contenedor temporal en el DOM
         const container = document.createElement("div");
-        container.innerHTML = `
-      <div class="print-card">${formRef.current?.innerHTML || ""}</div>
-      <hr/>
-      <div class="print-card">${stubRef.current?.innerHTML || ""}</div>
-    `;
-        printNode(container, "ServiceTicket - Completo");
-    };
+        container.className = "print-area";
 
-    const handlePrintForm = () => printNode(formRef.current, "ServiceTicket - Nota");
-    const handlePrintStub = () => printNode(stubRef.current, "ServiceTicket - Talón");
+        const formHtml = formRef.current?.innerHTML || "";
+        const stubHtml = stubRef.current?.innerHTML || "";
+        container.innerHTML = `
+            <div class="print-card">${formHtml}</div>
+            <div class="print-separator"></div>
+            <div class="print-card">${stubHtml}</div>
+        `;
+
+        document.body.appendChild(container);
+        window.print();
+        document.body.removeChild(container);
+    };
 
     const goToResultsForm = () => {
         // navega a otra ruta (ajusta si usás useNavigate)
