@@ -268,14 +268,14 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
 
                 {/* Si querés mostrar quién cargó el ticket */}
                 {localStorage.getItem("name") ? (
-                    <>
+                    <div className={"no-print"}>
                         <Divider sx={{ my: 2 }} />
                         <Box sx={{ color: "text.secondary" }}>
                             <Typography variant="caption">
                                 Usuario: <strong>{localStorage.getItem("name")}</strong>
                             </Typography>
                         </Box>
-                    </>
+                    </div>
                 ) : null}
             </CardContent>
         </Card>

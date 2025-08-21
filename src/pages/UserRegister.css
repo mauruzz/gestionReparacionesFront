@@ -1,0 +1,11 @@
+.user-register-content {
+    flex: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    margin-left: 240px; /* ancho sidebar expandido */
+}
+
+.user-register-content.collapsed {
+    margin-left: 80px; /* ancho sidebar colapsado */
+    transition: margin-left 0.3s ease;
+}

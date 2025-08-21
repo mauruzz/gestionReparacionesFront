@@ -23,7 +23,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     const menuItems = [
         { to: '/dashboard', label: 'Inicio', icon: <HomeIcon /> },
         { to: '/register-user', label: 'Registro usuario', icon: <PersonAddAlt1Icon /> },
-        { to: '/service-ticket', label: 'Registro reparación', icon: <InventoryIcon /> },
+        { to: '/register-ticket', label: 'Registro reparación', icon: <InventoryIcon /> },
         { to: '/admin', label: 'Administrar', icon: <BuildIcon /> },
         { to: '/planillas', label: 'Planillas', icon: <DescriptionIcon /> },
         { to: '/cardex', label: 'Cardex', icon: <SpeedIcon /> },
@@ -33,7 +33,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
     const initials = username ? username.charAt(0).toUpperCase() : 'U';
 
     return (
-        <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+        <aside className={`no-print sidebar ${collapsed ? 'collapsed' : ''}`}>
             <div className={`sidebar-top ${collapsed ? 'collapsed' : ''}`}>
                 {!collapsed &&
                     <div className="brand">

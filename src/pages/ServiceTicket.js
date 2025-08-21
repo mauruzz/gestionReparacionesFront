@@ -162,39 +162,30 @@ const ServiceTicket = () => {
     };
 
     // Marca un nodo como "área de impresión", imprime y limpia
-    const printElement = (el) => {
-        if (!el) return;
-        el.classList.add("print-area");
-        window.print();
-        el.classList.remove("print-area");
-    };
-
     const handlePrintForm = () => {
-        printElement(formRef.current);
+        formRef.current.classList.add("print-area");
+        stubRef.current?.classList.add("no-print");
+        window.print();
+        formRef.current.classList.remove("print-area");
+        stubRef.current?.classList.remove("no-print");
     };
 
     const handlePrintStub = () => {
-        // Asegurate de marcar el contenedor del stub (aunque esté fuera de pantalla)
-        printElement(stubRef.current);
+        stubRef.current?.classList.add("print-area");
+        formRef.current.classList.add("no-print");
+        window.print();
+        stubRef.current?.classList.remove("print-area");
+        formRef.current.classList.remove("no-print");
     };
 
     const handlePrintAll = () => {
-        // Cloná ambos contenidos y armá un contenedor temporal en el DOM
-        const container = document.createElement("div");
-        container.className = "print-area";
-
-        const formHtml = formRef.current?.innerHTML || "";
-        const stubHtml = stubRef.current?.innerHTML || "";
-        container.innerHTML = `
-            <div class="print-card">${formHtml}</div>
-            <div class="print-separator"></div>
-            <div class="print-card">${stubHtml}</div>
-        `;
-
-        document.body.appendChild(container);
+        formRef.current.classList.add("print-area");
+        stubRef.current?.classList.add("print-area-stub");
         window.print();
-        document.body.removeChild(container);
+        formRef.current.classList.remove("print-area");
+        stubRef.current?.classList.remove("print-area-stub");
     };
+
 
     const goToResultsForm = () => {
         // navega a otra ruta (ajusta si usás useNavigate)
@@ -236,7 +227,7 @@ const ServiceTicket = () => {
                 </Box>
 
                 {/* Talón (oculto visualmente, pero listo para imprimir) */}
-                <div style={{ position: "absolute", left: "-99999px", top: 0 }}>
+                <div className={"print-only"}>
                     <div ref={stubRef}>
                         <ServiceTicketStub formData={formData} />
                     </div>

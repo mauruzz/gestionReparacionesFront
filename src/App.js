@@ -7,6 +7,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from './pages/Dashboard';
 import LoginPage from "./pages/LoginPage";
 import ServiceTicket from "./pages/ServiceTicket"
+import UserRegister from "./pages/UserRegister"
 
 function App() {
     return (
@@ -21,9 +22,11 @@ function App() {
                             <Dashboard />
                         </PrivateRoute>
                     } />
-                    <Route path="/service-ticket" element={
+                    <Route path="/register-ticket" element={
                             <ServiceTicket />}/>
-                    <Route path="/service-ticket/:id" element={<ServiceTicket />} />
+                    <Route path="/register-ticket/:id" element={<ServiceTicket />} />
+                    <Route path="/register-user" element={
+                        <UserRegister />}/>
                 </Routes>
             </Router>
         </ThemeProvider>

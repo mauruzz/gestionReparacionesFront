@@ -16,7 +16,7 @@ const ActionButtons = ({
                            onGoToResults,
                        }) => {
     return (
-        <Stack direction="row" spacing={1} justifyContent="flex-end" flexWrap="wrap">
+        <Stack className={'no-print'} direction="row" spacing={1} justifyContent="flex-end" flexWrap="wrap">
             <Button variant="contained" startIcon={<SendIcon />} onClick={onSubmit}>
                 Enviar
             </Button>
