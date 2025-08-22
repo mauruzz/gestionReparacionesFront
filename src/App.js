@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import LoginPage from "./pages/LoginPage";
 import ServiceTicket from "./pages/ServiceTicket"
 import UserRegister from "./pages/UserRegister"
+import AdminPage from "./pages/AdminPage"
 
 function App() {
     return (
@@ -27,6 +28,8 @@ function App() {
                     <Route path="/register-ticket/:id" element={<ServiceTicket />} />
                     <Route path="/register-user" element={
                         <UserRegister />}/>
+                    <Route path="/manage" element={
+                        <AdminPage />}/>
                 </Routes>
             </Router>
         </ThemeProvider>

@@ -24,7 +24,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         { to: '/dashboard', label: 'Inicio', icon: <HomeIcon /> },
         { to: '/register-user', label: 'Registro usuario', icon: <PersonAddAlt1Icon /> },
         { to: '/register-ticket', label: 'Registro reparación', icon: <InventoryIcon /> },
-        { to: '/admin', label: 'Administrar', icon: <BuildIcon /> },
+        { to: '/manage', label: 'Administrar', icon: <BuildIcon /> },
         { to: '/planillas', label: 'Planillas', icon: <DescriptionIcon /> },
         { to: '/cardex', label: 'Cardex', icon: <SpeedIcon /> },
         { to: '/backup', label: 'Backup', icon: <BackupIcon /> },
