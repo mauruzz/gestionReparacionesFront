@@ -45,7 +45,7 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
     };
 
     return (
-        <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+        <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
             <CardHeader
                 title="Nota de inspección"
                 slotProps={{ title: { fontSize: "xx-large" } }}
