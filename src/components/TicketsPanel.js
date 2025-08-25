@@ -129,7 +129,6 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            // endpoint hipotético: PATCH /api/instruments/{id}
             await axios.patch(`http://localhost:9000/api/instruments/${instrumentId}`, { notice: value }, config);
             // podrías mostrar un toast o actualizar el array local para mostrar cambio inmediato
         } catch (err) {

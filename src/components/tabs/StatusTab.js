@@ -26,8 +26,26 @@ const StatusTab = () => {
         habilitado: true,
     });
     const [editingId, setEditingId] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+
+        const fetchAll = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem('token');
+                const config = { headers: { Authorization: `Bearer ${token}` } };
+                const res = await axios.get('http://localhost:9000/api/service_ticket/all', config);
+                setTickets(Array.isArray(res.data) ? res.data : []);
+            } catch (err) {
+                console.error('Error al cargar tickets', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAll();
+
+
         // acá harías el fetch a tu API
         setStatuses([
             { id: 1, descripcion: "Pendiente", color: "#f44336", habilitado: true },
@@ -77,6 +95,8 @@ const StatusTab = () => {
         setFormData({ descripcion: "", color: "", habilitado: true });
         setEditingId(null);
     };
+
+    if (loading) return <Typography>Loading...</Typography>;
 
     return (
         <Box sx={{ flexGrow: 1, width: "100%" }}>
