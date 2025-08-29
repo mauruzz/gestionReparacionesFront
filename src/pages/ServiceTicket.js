@@ -112,7 +112,6 @@ const ServiceTicket = () => {
     };
 
     const handleSubmit = async () => {
-        console.log(formData);
         try {
             const res = await fetch(
                 "http://localhost:9000/api/service_ticket/save",

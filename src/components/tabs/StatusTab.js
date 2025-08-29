@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import {
     Box,
     Table,
@@ -14,6 +15,7 @@ import {
     Checkbox,
     Card, CardContent,
     Stack, Paper, Typography, Divider,
+    Select, MenuItem, Chip, InputLabel,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import './TableStyle.css';
@@ -21,12 +23,20 @@ import './TableStyle.css';
 const StatusTab = () => {
     const [statuses, setStatuses] = useState([]);
     const [formData, setFormData] = useState({
-        descripcion: "",
+        id_status: null,
+        description: "",
         color: "",
-        habilitado: true,
+        enable: true,
     });
-    const [editingId, setEditingId] = useState(null);
     const [loading, setLoading] = useState(false);
+    const statusColors = {
+        NARANJA: "warning",
+        AZUL: "info",
+        VERDE: "success",
+        ROJO: "error",
+        VIOLETA: "secondary",
+    };
+
 
     useEffect(() => {
 
@@ -35,8 +45,8 @@ const StatusTab = () => {
             try {
                 const token = localStorage.getItem('token');
                 const config = { headers: { Authorization: `Bearer ${token}` } };
-                const res = await axios.get('http://localhost:9000/api/service_ticket/all', config);
-                setTickets(Array.isArray(res.data) ? res.data : []);
+                const res = await axios.get('http://localhost:9000/api/status/all', config);
+                setStatuses(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error('Error al cargar tickets', err);
             } finally {
@@ -44,25 +54,14 @@ const StatusTab = () => {
             }
         };
         fetchAll();
-
-
-        // acá harías el fetch a tu API
-        setStatuses([
-            { id: 1, descripcion: "Pendiente", color: "#f44336", habilitado: true },
-            { id: 2, descripcion: "En proceso", color: "#2196f3", habilitado: true },
-            { id: 3, descripcion: "Pendiente", color: "#f44336", habilitado: true },
-            { id: 4, descripcion: "En proceso", color: "#2196f3", habilitado: true },
-            { id: 5, descripcion: "Pendiente", color: "#f44336", habilitado: true },
-            { id: 6, descripcion: "En proceso", color: "#2196f3", habilitado: true },
-        ]);
     }, []);
 
     const handleEdit = (status) => {
-        setEditingId(status.id);
         setFormData({
-            descripcion: status.descripcion,
+            id_status: status.id_status,
+            description: status.description,
             color: status.color,
-            habilitado: status.habilitado,
+            enable: status.enable,
         });
     };
 
@@ -74,27 +73,60 @@ const StatusTab = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (editingId) {
-            // update
-            setStatuses((prev) =>
-                prev.map((s) =>
-                    s.id === editingId ? { ...s, ...formData } : s
-                )
-            );
-        } else {
-            // create
-            setStatuses((prev) => [
-                ...prev,
-                { id: prev.length + 1, ...formData },
-            ]);
-        }
-
-        setFormData({ descripcion: "", color: "", habilitado: true });
-        setEditingId(null);
+    const authHeaders = () => {
+        const token = localStorage.getItem("token");
+        return {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // evita que el form recargue la página
+        setLoading(true);
+        try {
+            let response;
+            if (formData.id_status) {
+                // 🔄 Actualizar
+                response = await fetch(`http://localhost:9000/api/status/${formData.id_status}`, {
+                    method: "PUT",
+                    headers: authHeaders(),
+                    body: JSON.stringify(formData),
+                });
+            } else {
+                // ➕ Crear
+                response = await fetch("http://localhost:9000/api/status/save", {
+                    method: "POST",
+                    headers: authHeaders(),
+                    body: JSON.stringify(formData),
+                });
+            }
+
+            if (!response.ok) {
+                throw new Error("Error en la petición");
+            }
+
+            const data = await response.json();
+            console.log("Guardado/Actualizado con éxito:", data);
+
+            // ✅ opcional: limpiar formulario
+            setFormData({
+                id_status: "",
+                description: "",
+                color: "",
+                enable: false,
+            });
+            // ✅ opcional: refrescar lista o redirigir
+            // navigate("/status"); // si usás react-router
+            // window.location.reload(); // recarga la página (no es lo más elegante)
+            window.location.reload() //MEJORAR
+        } catch (error) {
+            console.error("Error al guardar:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     if (loading) return <Typography>Loading...</Typography>;
 
@@ -118,20 +150,17 @@ const StatusTab = () => {
                         </TableHead>
                         <TableBody>
                             {statuses.map((status) => (
-                                <TableRow key={status.id}>
-                                    <TableCell>{status.descripcion}</TableCell>
+                                <TableRow key={status.id_status}>
+                                    <TableCell>{status.description}</TableCell>
                                     <TableCell>
-                                        <Box
-                                            sx={{
-                                                width: 20,
-                                                height: 20,
-                                                bgcolor: status.color,
-                                                border: "1px solid #ccc",
-                                            }}
+                                        <Chip
+                                            label={status.color}
+                                            color={statusColors[status.color] || "default"}
+                                            size="small"
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Checkbox checked={status.habilitado} disabled />
+                                        <Checkbox checked={status.enable} disabled />
                                     </TableCell>
                                     <TableCell>
                                         <IconButton onClick={() => handleEdit(status)}>
@@ -163,28 +192,34 @@ const StatusTab = () => {
                             <Stack spacing={2}>
                                 <TextField
                                     label="Descripción"
-                                    name="descripcion"
-                                    value={formData.descripcion}
+                                    name="description"
+                                    value={formData.description}
                                     onChange={handleChange}
                                     size="small"
                                 />
                                 <TextField
+                                    select
                                     label="Color"
                                     name="color"
                                     value={formData.color}
                                     onChange={handleChange}
-                                    size="small"
-                                />
+                                >
+                                    {Object.entries(statusColors).map(([status, color]) => (
+                                        <MenuItem key={status} value={status}>
+                                            <Chip label={status} color={color} size="small" />
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
                                 <Stack direction="row" alignItems="center">
                                     <Checkbox
-                                        name="habilitado"
-                                        checked={formData.habilitado}
+                                        name="enable"
+                                        checked={formData.enable || false}
                                         onChange={handleChange}
                                     />
                                     Habilitado
                                 </Stack>
                                 <Button type="submit" variant="contained">
-                                    {editingId ? "Actualizar" : "Crear"}
+                                    {formData.id_status ? "Actualizar" : "Crear"}
                                 </Button>
                             </Stack>
                         </Box>
