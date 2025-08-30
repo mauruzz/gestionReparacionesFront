@@ -122,7 +122,7 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
 
     const navigate = useNavigate();
     const handleRowClick = (id) => {
-        navigate(`/service-ticket/${id}`);
+        navigate(`/register-ticket/${id}`);
     };
     const handleNoticeSave = async (instrumentId, value) => {
         // Placeholder: intenta hacer PATCH al endpoint de instrument (ajustá la URL real)
