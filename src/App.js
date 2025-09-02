@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import ServiceTicket from "./pages/ServiceTicket"
 import UserRegister from "./pages/UserRegister"
 import AdminPage from "./pages/AdminPage"
+import SpreadSheets from "./pages/Spreadsheets"
 
 function App() {
     return (
@@ -30,6 +31,8 @@ function App() {
                         <UserRegister />}/>
                     <Route path="/manage" element={
                         <AdminPage />}/>
+                    <Route path="/spreadsheets" element={
+                        <SpreadSheets />}/>
                 </Routes>
             </Router>
         </ThemeProvider>
