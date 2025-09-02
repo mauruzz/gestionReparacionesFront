@@ -48,7 +48,7 @@ const StatusTab = () => {
                 const res = await axios.get('http://localhost:9000/api/status/all', config);
                 setStatuses(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
-                console.error('Error al cargar tickets', err);
+                console.error('Error al cargar estados', err);
             } finally {
                 setLoading(false);
             }
