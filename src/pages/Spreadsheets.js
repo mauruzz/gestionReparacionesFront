@@ -71,9 +71,41 @@ function Spreadsheets() {
     };
 
     const handleExportExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(tickets);
+        if (!tickets || tickets.length === 0) {
+            alert("No hay datos para exportar");
+            return;
+        }
+
+        // Mapeamos solo las columnas que se muestran en la tabla
+        const exportData = tickets.map((t) => ({
+            "Id": t.id_service_ticket,
+            "F. ingreso": t.entry_date,
+            "Nombre": t.client?.name || "",
+            "Email": t.client?.email || "",
+            "Telefono": t.client?.phone || "",
+            "Dirección": t.client?.address || "",
+            "Producto": t.instrument?.product || "",
+            "Modelo": t.instrument?.model || "",
+            "N° de serie": t.instrument?.serial_number || "",
+            "Garantía": t.instrument?.warranty ? "Sí" : "No",
+            "Observaciones": t.instrument?.comments || "",
+        }));
+
+        // Generamos hoja de cálculo
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Tickets");
+
+        // Ajustamos el ancho de las columnas automáticamente
+        const columnWidths = Object.keys(exportData[0]).map((key) => ({
+            wch: Math.max(
+                key.length,
+                ...exportData.map((row) => (row[key] ? row[key].toString().length : 0))
+            ) + 2,
+        }));
+        worksheet["!cols"] = columnWidths;
+
+        // Guardamos archivo
         XLSX.writeFile(workbook, "planilla.xlsx");
     };
 

@@ -21,7 +21,7 @@ import {
 function FilteredTicketsTable({ tickets }) {
 
     return (
-        <Box sx={{ flexGrow: 1, width: "100%" }}>
+        <Box sx={{ flexGrow: 1, width: "100%", paddingTop: 3 }}>
             <Stack direction="row" spacing={3} alignItems="flex-start">
 
                 {/* Tabla */}
@@ -33,20 +33,34 @@ function FilteredTicketsTable({ tickets }) {
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell>Fecha de ingreso</TableCell>
+                                <TableCell>Id</TableCell>
+                                <TableCell>F. ingreso</TableCell>
                                 <TableCell>Nombre</TableCell>
+                                <TableCell>Email</TableCell>
                                 <TableCell>Telefono</TableCell>
                                 <TableCell>Dirección</TableCell>
+                                <TableCell>Producto</TableCell>
+                                <TableCell>Modelo</TableCell>
+                                <TableCell>N° de serie</TableCell>
+                                <TableCell>Garantía</TableCell>
+                                <TableCell>Observaciones</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {tickets.length > 0 ? (
                                 tickets.map((t) => (
                                 <TableRow key={t.id_service_ticket}>
+                                    <TableCell>{t.id_service_ticket}</TableCell>
                                     <TableCell>{t.entry_date}</TableCell>
                                     <TableCell>{t.client.name}</TableCell>
+                                    <TableCell>{t.client.email}</TableCell>
                                     <TableCell>{t.client.phone}</TableCell>
                                     <TableCell>{t.client.address}</TableCell>
+                                    <TableCell>{t.instrument.product}</TableCell>
+                                    <TableCell>{t.instrument.model}</TableCell>
+                                    <TableCell>{t.instrument.serial_number}</TableCell>
+                                    <TableCell>{t.instrument.warranty}</TableCell>
+                                    <TableCell>{t.instrument.comments}</TableCell>
                                 </TableRow>
                             ))
                             ) : (

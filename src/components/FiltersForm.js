@@ -64,50 +64,35 @@ function FiltersForm({ onSubmit, onExport }) {
                         <TextField
                             fullWidth
                             size="small"
+                            label="Nombre de cliente"
+                            value={""}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <TextField
+                            fullWidth
+                            size="small"
                             label="Modelo"
                             value={""}
                         />
                     </Grid>
-
                     <Grid item xs={12} md={4}>
                         <TextField
                             fullWidth
                             size="small"
-                            label="N° de serie"
-                            value={""}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            type="date"
-                            label="Fecha de compra"
-                            slotProps={{ inputLabel: { shrink: true } }}
-                            value={""}
-                        />
-                    </Grid>
-
-
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            multiline
-                            minRows={2}
-                            label="Observaciones"
+                            label="Producto"
                             value={""}
                         />
                     </Grid>
                 </Grid>
-                <Grid>
+                <Stack direction="row" spacing={1} justifyContent="flex-start" flexWrap="wrap" sx={{marginTop: 2}}>
                     <Button type="submit" variant="contained" onClick={handleSubmit}>
                         Filtrar
                     </Button>
-                    <Button variant="outlined" onClick={onExport}>
+                    <Button variant="outlined" onClick={onExport} sx={{marginLeft: 2}}>
                         Exportar Excel
                     </Button>
-                </Grid>
+                </Stack>
             </CardContent>
         </Card>
 
