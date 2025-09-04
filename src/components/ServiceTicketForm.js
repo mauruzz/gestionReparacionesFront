@@ -19,6 +19,14 @@ const SectionTitle = ({ children }) => (
 );
 
 const ServiceTicketForm = ({ formData, setFormData }) => {
+    const statusColors = {
+        NARANJA: "warning",
+        AZUL: "info",
+        VERDE: "success",
+        ROJO: "error",
+        VIOLETA: "secondary",
+    };
+
     const setField = (name, value) =>
         setFormData((prev) => ({ ...prev, [name]: value }));
 
@@ -77,6 +85,23 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                             onChange={(e) => setField("entry_date", e.target.value)}
                         />
                     </Grid>
+                    <Grid item xs={12} md={40}>
+                        <FormControl sx={{ m: 1, width: 203, minWidth: 110, margin: 0 }} size={"small"} variant="outlined">
+                            <InputLabel id="status-label">Estado</InputLabel>
+                            <Select
+                                labelId="status-label"
+                                name="status"
+                                value={formData.status.desciption}
+                                fullWidth={true}
+                                label="Estado"
+                            >
+                                <MenuItem key={formData.status.desciption} value={formData.status.desciption}>
+                                    <Chip label={formData.status.desciption} color={formData.status.color} size="small" />
+                                </MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
                 </Grid>
 
                 <Divider sx={{ my: 2 }} />
