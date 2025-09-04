@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Card,
     CardContent,
@@ -11,6 +11,7 @@ import {
     Box, FormControl, InputLabel, Select, MenuItem,
 } from "@mui/material";
 import './ServiceTicketForm.css';
+import axios from "axios";
 
 const SectionTitle = ({ children }) => (
     <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
@@ -18,7 +19,8 @@ const SectionTitle = ({ children }) => (
     </Typography>
 );
 
-const ServiceTicketForm = ({ formData, setFormData }) => {
+const ServiceTicketForm = ({ formData, setFormData, statusList }) => {
+
     const statusColors = {
         NARANJA: "warning",
         AZUL: "info",
@@ -49,6 +51,16 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                 ...prev.instrument,
                 [name]: parsedValue
             }
+        }));
+    };
+
+    const handleStatusChange = (e) => {
+        const selectedId = e.target.value;
+        const selectedStatus = statusList.find((s) => s.id_status === selectedId);
+
+        setFormData((prev) => ({
+            ...prev,
+            status: selectedStatus,
         }));
     };
 
@@ -86,18 +98,23 @@ const ServiceTicketForm = ({ formData, setFormData }) => {
                         />
                     </Grid>
                     <Grid item xs={12} md={40}>
-                        <FormControl sx={{ m: 1, width: 203, minWidth: 110, margin: 0 }} size={"small"} variant="outlined">
+                        <FormControl sx={{ m: 1, width: 203, minWidth: 110, margin: 0 }} size="small">
                             <InputLabel id="status-label">Estado</InputLabel>
                             <Select
                                 labelId="status-label"
-                                name="status"
-                                value={formData.status.desciption}
-                                fullWidth={true}
+                                value={formData.status?.id_status || ""}
+                                onChange={handleStatusChange}
                                 label="Estado"
                             >
-                                <MenuItem key={formData.status.desciption} value={formData.status.desciption}>
-                                    <Chip label={formData.status.desciption} color={formData.status.color} size="small" />
-                                </MenuItem>
+                                {statusList.map((st) => (
+                                    <MenuItem key={st.id_status} value={st.id_status}>
+                                        <Chip
+                                            label={st.description}
+                                            color={statusColors[st.color] || "default"}
+                                            size="small"
+                                        />
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Grid>

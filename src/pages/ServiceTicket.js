@@ -13,6 +13,7 @@ const ServiceTicket = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
+    const [statusList, setStatusList] = useState([]);
 
     const [formData, setFormData] = useState({
         id_service_ticket: "",
@@ -52,32 +53,6 @@ const ServiceTicket = () => {
     });
 
     useEffect(() => {
-        const fetchInitialStatus = async () => {
-            setLoading(true);
-            try {
-                const response = await fetch("http://localhost:9000/api/status/initial_status", {
-                    method: "GET",
-                    headers: authHeaders(),
-                });
-                if (!response.ok) {
-                    throw new Error("Error al obtener el status inicial");
-                }
-                const data = await response.json();
-
-                setFormData((prev) => ({
-                    ...prev,
-                    status: { id_status: data.id_status }
-                }));
-            } catch (error) {
-                console.error("No se pudo cargar el status inicial:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchInitialStatus();
-    }, []);
-
-    useEffect(() => {
         const fetchTicket = async () => {
             setLoading(true);
             try {
@@ -97,7 +72,35 @@ const ServiceTicket = () => {
         fetchTicket();
     }, [id]);
 
+    useEffect(() => {
+        // Traer lista de status al cargar
+        const fetchStatus = async () => {
+            try {
+                const res = await fetch("http://localhost:9000/api/status/all", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+                if (!res.ok) throw new Error("Error al obtener estados");
+                const data = await res.json();
+                setStatusList(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchStatus();
+    }, []);
 
+    // Sincronizar formData.status con la lista traída
+    useEffect(() => {
+        if (statusList.length > 0 && formData.status?.id_status) {
+            const matched = statusList.find(s => s.id_status === formData.status.id_status);
+            if (matched && matched.id_status !== formData.status.id_status) {
+                setFormData(prev => ({ ...prev, status: matched }));
+            }
+        }
+    }, [statusList, formData.status?.id_status]);
 
     // refs para imprimir
     const formRef = useRef(null);
@@ -138,12 +141,12 @@ const ServiceTicket = () => {
     };
 
     const handleUpdate = async () => {
-        // suponemos endpoint PUT /api/service_ticket/{id}
         if (!formData.id_service_ticket) {
             alert("Primero guarde el ticket para obtener un ID.");
             return;
         }
         try {
+            console.log(formData);
             const res = await fetch(
                 `http://localhost:9000/api/service_ticket/${formData.id_service_ticket}`,
                 {
@@ -197,20 +200,9 @@ const ServiceTicket = () => {
         <div className="dashboard-container">
             <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
             <main className={`dashboard-content ${collapsed ? "collapsed" : ""}`}>
-                {/*
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                        Nota de inspección
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        subtitulo
-                    </Typography>
-                </Box>
-                */}
-
                 {/* Formulario (primero) */}
                 <div ref={formRef}>
-                    <ServiceTicketForm formData={formData} setFormData={setFormData} />
+                    <ServiceTicketForm formData={formData} setFormData={setFormData} statusList={statusList}/>
                 </div>
 
                 {/* Botonera (después del form) */}

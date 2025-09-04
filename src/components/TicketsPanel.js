@@ -174,7 +174,7 @@ const TicketTable = ({ tickets = [], editableField = false, loading = false }) =
                                 <TableCell>#{id}</TableCell>
                                 <TableCell>{date}</TableCell>
                                 <TableCell>
-                                    <StatusChip status={status} />
+                                    <StatusChip status={t.status} />
                                 </TableCell>
                                 <TableCell>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -226,14 +226,22 @@ const formatCurrency = (v) => {
 };
 
 const StatusChip = ({ status }) => {
-    const s = (status || '').toString().toLowerCase();
-    let color = 'default';
-    if (s.includes('final') || s.includes('paid') || s.includes('entregado')) color = 'success';
-    else if (s.includes('cancel') || s.includes('anulado')) color = 'error';
-    else if (s.includes('recepcionado') || s.includes('pending')) color = 'warning';
-    else color = 'default';
+    const statusColors = {
+        NARANJA: "warning",
+        AZUL: "info",
+        VERDE: "success",
+        ROJO: "error",
+        VIOLETA: "secondary",
+    };
 
-    return <Chip label={status} color={color} size="small" />;
+    if (!status) {
+        return <Chip label="-" size="small" />;
+    }
+
+    const chipColor = statusColors[status.color] || "default";
+
+    return <Chip label={status.description} color={chipColor} size="small" />;
 };
+
 
 export default TicketsPanel;
